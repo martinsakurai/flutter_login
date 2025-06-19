@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_login/entities/users.dart';
+import 'package:flutter_login/entities/players_provider.dart';
+import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   static const String name = 'home_screen';
 
-  final User usuarioIngresado; // uso final ya que estamos en un Statless widget. Como StatelessWidget no cambia su estado, sus propiedades deberían ser final
-  final jugadores = Player.playerList;
+  final User usuarioIngresado;
 
-  HomeScreen({super.key, required this.usuarioIngresado}); //aca se dice que se requiere el userName de la pantalla login, la variable esta declarada igual que en appRouter
+  HomeScreen({super.key, required this.usuarioIngresado});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final jugadores = ref.watch(playersProvider);
+
     return Scaffold(
-      appBar: AppBar(title: Text('Bienvenido, ${usuarioIngresado.nombre}'),),
+      appBar: AppBar(title: Text('Bienvenido, ${usuarioIngresado.nombre}')),
       body: ListView.builder(
         itemCount: jugadores.length,
         itemBuilder: (context, index) {
@@ -25,7 +29,8 @@ class HomeScreen extends StatelessWidget {
                 width: 60,
                 height: 60,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.image),
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.image),
               ),
               title: Text(jugador.name),
               subtitle: Text(
@@ -37,6 +42,13 @@ class HomeScreen extends StatelessWidget {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navega a la pantalla para agregar jugador
+          context.go('/addPlayer');
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

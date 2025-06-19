@@ -1,3 +1,4 @@
+import 'package:flutter_login/screens/add_player_screen.dart';
 import 'package:flutter_login/screens/homescreen.dart';
 import 'package:flutter_login/screens/loginscreen.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,12 @@ final routerApp = GoRouter(routes: [
   GoRoute(
     name: HomeScreen.name,
     path: '/home',
-    builder: (context, state) => HomeScreen(usuarioIngresado: state.extra as User), // state.extra contiene el valor que yo le mande desde el login, en este caso el nombre de usuario. Es lo que recibe la homescreen desde el login
+    builder: (context, state) =>
+        HomeScreen(usuarioIngresado: state.extra as User),
+  ),
+  GoRoute(
+    name: AddPlayerScreen.name,
+    path: '/addPlayer',
+    builder: (context, state) => const AddPlayerScreen(),
   ),
 ]);
