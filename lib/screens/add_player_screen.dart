@@ -14,7 +14,6 @@ class AddPlayerScreen extends ConsumerStatefulWidget {
 }
 
 class _AddPlayerScreenState extends ConsumerState<AddPlayerScreen> {
-  final _formKey = GlobalKey<FormState>();
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
@@ -32,93 +31,71 @@ class _AddPlayerScreenState extends ConsumerState<AddPlayerScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
-          key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
+              TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nombre'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Ingrese un nombre' : null,
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Nombre'),
               ),
-              TextFormField(
+              SizedBox(height: 10),
+              TextField(
                 controller: countryController,
-                decoration: const InputDecoration(labelText: 'País'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Ingrese un país' : null,
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'País'),
               ),
-              TextFormField(
+              SizedBox(height: 10),
+              TextField(
                 controller: goalsController,
-                decoration: const InputDecoration(labelText: 'Goles'),
-                keyboardType: TextInputType.number,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Ingrese goles'
-                    : int.tryParse(value) == null
-                        ? 'Ingrese un número válido'
-                        : null,
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Goles'),
+                keyboardType: TextInputType.number, // utilizamos teclado numerico para ingresar los goles, esto es para evitar errores mas que nada 
               ),
-              TextFormField(
+              SizedBox(height: 10),
+              TextField(
                 controller: appearancesController,
-                decoration: const InputDecoration(labelText: 'Partidos'),
-                keyboardType: TextInputType.number,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Ingrese partidos'
-                    : int.tryParse(value) == null
-                        ? 'Ingrese un número válido'
-                        : null,
+                decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Partidos'),
+                keyboardType: TextInputType.number, //utilizamos teclado numerico para ingresar los partidos, esto es para evitar errores mas que nada
               ),
-              TextFormField(
+              SizedBox(height: 10),
+              TextField(
                 controller: clubsController,
-                decoration: const InputDecoration(labelText: 'Clubes'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Ingrese clubes' : null,
+                decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Clubes'),
               ),
-              TextFormField(
+              SizedBox(height: 10),
+              TextField(
                 controller: ageController,
-                decoration: const InputDecoration(labelText: 'Edad'),
-                keyboardType: TextInputType.number,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Ingrese edad'
-                    : int.tryParse(value) == null
-                        ? 'Ingrese un número válido'
-                        : null,
+                decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Edad'),
+                keyboardType: TextInputType.number, //utilizamos teclado numerico para ingresar la edad, esto es para evitar errores mas que nada
               ),
-              TextFormField(
+              SizedBox(height: 10),
+              TextField(
                 controller: ratioController,
-                decoration: const InputDecoration(labelText: 'Promedio'),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Ingrese promedio'
-                    : double.tryParse(value) == null
-                        ? 'Ingrese un número válido'
-                        : null,
+                decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Promedio'),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true), //utilizamos un teclado numerico
               ),
-              TextFormField(
+              SizedBox(height: 10),
+              TextField(
                 controller: posterUrlController,
-                decoration: const InputDecoration(labelText: 'URL de la imagen'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Ingrese URL' : null,
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'URL de la imagen'),
               ),
+              SizedBox(height: 10),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
                     final newPlayer = Player(
-                      name: nameController.text.trim(),
-                      country: countryController.text.trim(),
-                      goals: int.parse(goalsController.text.trim()),
-                      appearances: int.parse(appearancesController.text.trim()),
-                      clubs: clubsController.text.trim(),
-                      age: int.parse(ageController.text.trim()),
-                      ratio: double.parse(ratioController.text.trim()),
-                      posterUrl: posterUrlController.text.trim(),
+                      name: nameController.text,
+                      country: countryController.text,
+                      goals: int.parse(goalsController.text), //convertimos a int el texto ingresado por el usuario
+                      appearances: int.parse(appearancesController.text), // convertimos a int el texto ingresado por el usuario
+                      clubs: clubsController.text,
+                      age: int.parse(ageController.text), // convertimos a int el texto ingresado por el usuario
+                      ratio: double.parse(ratioController.text), // convertimos a float/double el texto ingresado por el usuario
+                      posterUrl: posterUrlController.text,
                     );
 
                     ref.read(playersProvider.notifier).addPlayer(newPlayer);
 
                     // Regresa a la pantalla anterior
                     context.pop();
-                  }
+                  
                 },
                 child: const Text('Agregar jugador'),
               ),

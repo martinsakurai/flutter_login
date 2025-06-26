@@ -9,7 +9,7 @@ class HomeScreen extends ConsumerWidget {
 
   final User usuarioIngresado;
 
-  HomeScreen({super.key, required this.usuarioIngresado});
+  const HomeScreen({super.key, required this.usuarioIngresado});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,6 +24,7 @@ class HomeScreen extends ConsumerWidget {
           return Card(
             margin: const EdgeInsets.all(10),
             child: ListTile(
+                onTap: () {context.push('/viewPlayer', extra: jugador,);},
               leading: Image.network(
                 jugador.posterUrl,
                 width: 60,
@@ -38,15 +39,15 @@ class HomeScreen extends ConsumerWidget {
                 'Goles: ${jugador.goals}, Partidos: ${jugador.appearances}, Promedio: ${jugador.ratio.toStringAsFixed(2)}\n'
                 'Clubes: ${jugador.clubs}',
               ),
-              isThreeLine: true,
+              //isThreeLine: true,
             ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navega a la pantalla para agregar jugador
-          context.go('/addPlayer');
+          // cambio a la pantalla para agregar jugador
+          context.push('/addPlayer');
         },
         child: const Icon(Icons.add),
       ),
