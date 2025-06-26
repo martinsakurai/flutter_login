@@ -20,6 +20,7 @@ class ViewPlayerScreen extends ConsumerWidget {
         child: Form(
           child: ListView ( // si el contenido de la pantalla es extenso, hago que sea scrolleable
             children: [
+            const SizedBox(height:10),
             TextFormField(
               initialValue: jugador.name,
               enabled: false,
