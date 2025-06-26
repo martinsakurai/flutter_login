@@ -14,7 +14,7 @@ class ViewPlayerScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: Text('Detalle de ${jugador.name}')),
+      appBar: AppBar(title: Text('Detalles de ${jugador.name}')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -23,49 +23,49 @@ class ViewPlayerScreen extends ConsumerWidget {
             TextFormField(
               initialValue: jugador.name,
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Nombre'),
+              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Nombre'),
             ),
             const SizedBox(height: 10),
             TextFormField(
               initialValue: jugador.country,
               enabled: false,
-              decoration: const InputDecoration(labelText: 'País'),
+              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'País'),
             ),
             const SizedBox(height: 10),
             TextFormField(
               initialValue: jugador.goals.toString(),
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Goles'),
+              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Goles'),
             ),
             const SizedBox(height: 10),
             TextFormField(
               initialValue: jugador.appearances.toString(),
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Partidos'),
+              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Partidos'),
             ),
             const SizedBox(height: 10),
             TextFormField(
               initialValue: jugador.clubs,
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Clubes'),
+              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Clubes'),
             ),
             const SizedBox(height: 10),
             TextFormField(
               initialValue: jugador.age.toString(),
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Edad'),
+              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Edad'),
             ),
             const SizedBox(height: 10),
             TextFormField(
               initialValue: jugador.ratio.toString(),
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Promedio'),
+              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Promedio'),
             ),
             const SizedBox(height: 10),
             TextFormField(
               initialValue: jugador.posterUrl,
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Promedio'),
+              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Promedio'),
             ),
             const SizedBox(height: 30),
             ElevatedButton(

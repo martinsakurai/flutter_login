@@ -42,7 +42,7 @@ class Player {
       clubs: 'Manchester United, Real Madrid, Juventus',
       age: 40,
       ratio: 0.77,
-      posterUrl: 'https://es.wikipedia.org/wiki/Cristiano_Ronaldo#/media/Archivo:Ronaldo_in_2018.jpg'
+      posterUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d7/Cristiano_Ronaldo_playing_for_Al_Nassr_FC_against_Persepolis%2C_September_2023_%28cropped%29.jpg'
 
     ),
     Player(
@@ -64,7 +64,7 @@ class Player {
       clubs: 'Borussia Dortmund, Bayern Munich, Barcelona',
       age: 36,
       ratio: 0.79,
-      posterUrl: 'https://www.fcbarcelona.com/photo-resources/2024/10/13/b666059e-1d0a-493f-a7e5-dd7a258d8165/09-Lewandowski-M.jpg?width=640&height=400'
+      posterUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/2019147200143_2019-05-27_Fussball_1.FC_Kaiserslautern_vs_FC_Bayern_M%C3%BCnchen_-_Sven_-_1D_X_MK_II_-_2462_-_B70I0762_%28cropped%29_%28cropped%29.jpg/250px-2019147200143_2019-05-27_Fussball_1.FC_Kaiserslautern_vs_FC_Bayern_M%C3%BCnchen_-_Sven_-_1D_X_MK_II_-_2462_-_B70I0762_%28cropped%29_%28cropped%29.jpg'
 
     ),
     Player(
@@ -97,7 +97,7 @@ class Player {
       clubs: 'Bayern Munich',
       age: 35,
       ratio: 0.35,
-      posterUrl: 'https://www.ole.com.ar/2023/05/10/AzkythvI7_1290x760__1.jpg'
+      posterUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Thomas_M%C3%BCller_2022_%28cropped%29.jpg'
 
     ),
     Player(
@@ -108,7 +108,7 @@ class Player {
       clubs: 'PSV Eindhoven, Manchester United, Real Madrid',
       age: 48,
       ratio: 0.77,
-      posterUrl: 'https://e00-elmundo.uecdn.es/elmundodeporte/futbol/2008-2009/nistelrooy.jpg'
+      posterUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Van_Nistelrooy_%282007%29.JPG/250px-Van_Nistelrooy_%282007%29.JPG'
 
     ),
     Player(
@@ -119,7 +119,7 @@ class Player {
       clubs: 'Monaco, Paris Saint-Germain, Real Madrid',
       age: 26,
       ratio: 0.64,
-      posterUrl: 'https://www.directvsports.com/__export/1734702436786/sites/dsports/img/2024/12/20/mbappx.jpg_44784309.jpg'
+      posterUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/57/2019-07-17_SG_Dynamo_Dresden_vs._Paris_Saint-Germain_by_Sandro_Halank%E2%80%93129_%28cropped%29.jpg'
 
     ),
     Player(
@@ -131,7 +131,26 @@ class Player {
       age: 47,
       ratio: 0.45,
       posterUrl: 'https://tmssl.akamaized.net/images/foto/galerie/thierry-henry-1417524348-3352.jpg'
-
-    )
+    ),
+    Player(
+      name: 'Erling Haaland',
+      country: 'Norway',
+      goals: 49,
+      appearances: 48,
+      clubs: 'Red Bull Salzburgo, B. V. Borussia Dortmund, Manchester City F.C.',
+      age: 24,
+      ratio: 1.02,
+      posterUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Erling_Haaland_2023_%28cropped-v2%29.jpg/250px-Erling_Haaland_2023_%28cropped-v2%29.jpg'
+    ),
+    Player(
+      name: 'Alfredo Di Stefano',
+      country: 'Argentina, Spain',
+      goals: 49,
+      appearances: 58,
+      clubs: 'Real Madrid',
+      age: 88,
+      ratio: 0.84,
+      posterUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/a7/Di_Stefano_argentina_%28colores%29.png' 
+    ),
   ];
 }

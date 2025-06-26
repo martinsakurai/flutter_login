@@ -27,8 +27,8 @@ class HomeScreen extends ConsumerWidget {
                 onTap: () {context.push('/viewPlayer', extra: jugador,);},
               leading: Image.network(
                 jugador.posterUrl,
-                width: 60,
-                height: 60,
+                width: 50,
+                height: 50,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
                     const Icon(Icons.image),
@@ -36,10 +36,9 @@ class HomeScreen extends ConsumerWidget {
               title: Text(jugador.name),
               subtitle: Text(
                 'País: ${jugador.country}\n'
-                'Goles: ${jugador.goals}, Partidos: ${jugador.appearances}, Promedio: ${jugador.ratio.toStringAsFixed(2)}\n'
+                'Goles: ${jugador.goals}, Partidos: ${jugador.appearances}, Promedio: ${jugador.ratio.toString()}\n'
                 'Clubes: ${jugador.clubs}',
               ),
-              //isThreeLine: true,
             ),
           );
         },
