@@ -4,12 +4,27 @@ import 'package:flutter_login/entities/users.dart';
 import 'package:flutter_login/entities/players_provider.dart';
 import 'package:go_router/go_router.dart';
 
+
 class ViewPlayerScreen extends ConsumerWidget {
   static const String name = 'view_player_screen';
 
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
+  final TextEditingController goalsController = TextEditingController();
+  final TextEditingController appearancesController = TextEditingController();
+  final TextEditingController clubsController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController ratioController = TextEditingController();
+  final TextEditingController posterUrlController = TextEditingController();
   final Player jugador;
 
-  const ViewPlayerScreen({super.key, required this.jugador});
+
+  bool isEditing = false;
+
+
+  ViewPlayerScreen({super.key, required this.jugador});
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,10 +91,18 @@ class ViewPlayerScreen extends ConsumerWidget {
               },
               child: const Text('BORRAR'),
             )
+            
             ],
         ),
       ),
     ),
+    floatingActionButton: FloatingActionButton(
+      onPressed: () {
+        context.push('/editPlayer', extra: jugador);
+      },
+      child: const Icon(Icons.edit),
+    )
     );
   }
 }
+

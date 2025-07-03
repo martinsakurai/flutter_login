@@ -2,6 +2,7 @@ import 'package:flutter_login/screens/add_player_screen.dart';
 import 'package:flutter_login/screens/homescreen.dart';
 import 'package:flutter_login/screens/loginscreen.dart';
 import 'package:flutter_login/screens/view_player_screen.dart';
+import 'package:flutter_login/screens/edit_player_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_login/entities/users.dart';
 
@@ -25,5 +26,11 @@ final routerApp = GoRouter(routes: [
   name: ViewPlayerScreen.name,
   path: '/viewPlayer',
   builder: (context, state) => ViewPlayerScreen(jugador: state.extra as Player),
+),
+GoRoute(
+  name: EditPlayerScreen.name,
+  path: '/editPlayer',
+  builder: (context, state) => EditPlayerScreen(jugador: state.extra as Player),
+    //return EditPlayerScreen(jugador: jugador);
 ),
 ]);
