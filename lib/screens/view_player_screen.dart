@@ -4,104 +4,133 @@ import 'package:flutter_login/entities/users.dart';
 import 'package:flutter_login/entities/players_provider.dart';
 import 'package:go_router/go_router.dart';
 
-
-class ViewPlayerScreen extends ConsumerWidget {
+class ViewPlayerScreen extends ConsumerStatefulWidget {
   static const String name = 'view_player_screen';
 
-
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController countryController = TextEditingController();
-  final TextEditingController goalsController = TextEditingController();
-  final TextEditingController appearancesController = TextEditingController();
-  final TextEditingController clubsController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
-  final TextEditingController ratioController = TextEditingController();
-  final TextEditingController posterUrlController = TextEditingController();
   final Player jugador;
+  const ViewPlayerScreen({super.key, required this.jugador});
 
+  @override
+  ConsumerState<ViewPlayerScreen> createState() => _ViewPlayerScreenState();
+}
 
+class _ViewPlayerScreenState extends ConsumerState<ViewPlayerScreen> {
   bool isEditing = false;
 
 
-  ViewPlayerScreen({super.key, required this.jugador});
-
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+  TextEditingController nameController = TextEditingController(text: widget.jugador.name,);
+  TextEditingController countryController = TextEditingController(text: widget.jugador.country,);
+  TextEditingController goalsController = TextEditingController(text: widget.jugador.goals.toString(),);
+  TextEditingController appearancesController = TextEditingController(text: widget.jugador.appearances.toString(),);
+  TextEditingController clubsController = TextEditingController(text: widget.jugador.clubs,);
+  TextEditingController ageController = TextEditingController(text: widget.jugador.age.toString(),);
+  TextEditingController ratioController = TextEditingController(text: widget.jugador.ratio.toString(),);
+  TextEditingController posterUrlController = TextEditingController(text: widget.jugador.posterUrl,);
     return Scaffold(
-      appBar: AppBar(title: Text('Detalles de ${jugador.name}')),
+      appBar: AppBar(title: Text('Detalles de ${widget.jugador.name}')),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Form(
-          child: ListView ( // si el contenido de la pantalla es extenso, hago que sea scrolleable
-            children: [
-            const SizedBox(height:10),
-            TextFormField(
-              initialValue: jugador.name,
-              enabled: false,
-              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Nombre'),
-            ),
+        child: ListView(
+          children: [
             const SizedBox(height: 10),
             TextFormField(
-              initialValue: jugador.country,
-              enabled: false,
-              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'País'),
+
+              controller: nameController,
+              enabled: isEditing,
+              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Nombre'),
             ),
             const SizedBox(height: 10),
-            TextFormField(
-              initialValue: jugador.goals.toString(),
-              enabled: false,
-              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Goles'),
+            TextField(
+              controller: countryController,
+              enabled: isEditing,
+              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'País'),
             ),
             const SizedBox(height: 10),
-            TextFormField(
-              initialValue: jugador.appearances.toString(),
-              enabled: false,
-              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Partidos'),
+            TextField(
+              controller: goalsController,
+              enabled: isEditing,
+              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Goles'),
+              keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 10),
-            TextFormField(
-              initialValue: jugador.clubs,
-              enabled: false,
-              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Clubes'),
+            TextField(
+              controller: appearancesController,
+              enabled: isEditing,
+              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Partidos'),
+              keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 10),
-            TextFormField(
-              initialValue: jugador.age.toString(),
-              enabled: false,
-              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Edad'),
+            TextField(
+              controller: clubsController,
+              enabled: isEditing,
+              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Clubes'),
             ),
             const SizedBox(height: 10),
-            TextFormField(
-              initialValue: jugador.ratio.toString(),
-              enabled: false,
-              decoration: const InputDecoration(border: OutlineInputBorder(),labelText: 'Promedio'),
+            TextField(
+              controller: ageController,
+              enabled: isEditing,
+              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Edad'),
+              keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 10),
-            TextFormField(
-              initialValue: jugador.posterUrl,
-              enabled: false,
+            TextField(
+              controller: ratioController,
+              enabled: isEditing,
               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Promedio'),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: posterUrlController,
+              enabled: isEditing,
+              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'URL de la imagen'),
             ),
             const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(playersProvider.notifier).removePlayer(jugador);
-                context.pop();
-              },
-              child: const Text('BORRAR'),
-            )
-            
-            ],
+
+            if (isEditing == true)
+              ElevatedButton(
+                onPressed: () {
+                  // Guardar cambios
+                  ref.read(playersProvider.notifier).removePlayer(widget.jugador);
+                  ref.read(playersProvider.notifier).addPlayer(
+                    Player(
+                      name: nameController.text,
+                      country: countryController.text,
+                      goals: int.parse(goalsController.text),
+                      appearances: int.parse(appearancesController.text),
+                      clubs: clubsController.text,
+                      age: int.parse(ageController.text),
+                      ratio: double.parse(ratioController.text),
+                      posterUrl: posterUrlController.text,
+                    ),
+                  );
+
+                    isEditing = false;
+                    context.pop();
+                },
+                child: const Text('GUARDAR CAMBIOS'),
+              )
+            else
+              ElevatedButton(
+                onPressed: () {
+                  ref.read(playersProvider.notifier).removePlayer(widget.jugador);
+                  context.pop();
+                },
+                child: const Text('BORRAR'),
+              ),
+          ],
         ),
       ),
-    ),
-    floatingActionButton: FloatingActionButton(
-      onPressed: () {
-        context.push('/editPlayer', extra: jugador);
-      },
-      child: const Icon(Icons.edit),
-    )
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            isEditing = !isEditing;
+          });
+        },
+        child: Icon(isEditing ? Icons.close : Icons.edit),
+      ),
     );
   }
 }
