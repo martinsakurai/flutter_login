@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 class AddPlayerScreen extends ConsumerStatefulWidget {
   static const String name = 'add_player_screen';
 
-  const AddPlayerScreen({Key? key}) : super(key: key);
+  const AddPlayerScreen({super.key});
 
   @override
   ConsumerState<AddPlayerScreen> createState() => _AddPlayerScreenState();

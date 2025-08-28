@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_login/entities/users.dart';
-import 'package:flutter_login/entities/players_provider.dart';
+//import 'package:flutter_login/entities/players_provider.dart';
+import 'package:flutter_login/entities/new_players_provider.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -13,7 +14,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final jugadores = ref.watch(playersProvider);
+    final jugadores = ref.watch(newPlayersProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text('Bienvenido, ${usuarioIngresado.nombre}')),

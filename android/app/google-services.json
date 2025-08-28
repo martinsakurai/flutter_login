@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "749615488069",
+    "project_id": "appdapfirebase",
+    "storage_bucket": "appdapfirebase.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:749615488069:android:edfd2b53e68e9dfc20d72c",
+        "android_client_info": {
+          "package_name": "com.example.flutter_login"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNRT9_7qPdENey8wlp9aNReC9wubNhIv4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
