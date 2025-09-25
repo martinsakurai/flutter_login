@@ -1,18 +1,60 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'users.dart'; // Aquí están las clases Player y User
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'users.dart';
 
-class PlayersNotifier extends StateNotifier<List<Player>> {
-  // inicializa el estado con la lista estatica de jugadores
-  PlayersNotifier() : super(List.from(Player.playerList));
+final newPlayersProvider = StateNotifierProvider<NewPlayersNotifier, List<Player>>((ref) {
+  return NewPlayersNotifier();
+});
 
-  // metodo para obtener todos los jugadores
-  void getAllPlayers() {
-    state = [...Player.playerList]; // state es la lista de Player (List<Player>). Cuando usamos el = le estamos diciendo a riverpod que actualice el estado y notifique a todos los widgets que estan escuchando (ref.watch)
-  //Player.playerList es la lista estatica original definida en users.dart
-  // ... se usa para copiar los elementos de una lista en otra lista. Esto crea una lista independiente
+class NewPlayersNotifier extends StateNotifier<List<Player>> {
+  NewPlayersNotifier() : super([]);
+
+  final CollectionReference<Player> _playersCollection = FirebaseFirestore.instance
+      .collection('jugadores')
+      .withConverter<Player>(
+        fromFirestore: (snapshot, _) => Player.fromFirestore(snapshot),
+        toFirestore: (player, _) => player.toFirestore(),
+      );
+
+  Future<void> getAllPlayers() async {
+    try {
+      final querySnapshot = await _playersCollection.get();
+      state = querySnapshot.docs.map((doc) => doc.data()).toList();
+    } catch (e) {
+      print('Error al obtener jugadores de Firebase: $e');
+    }
+  }
+
+  Future<void> addPlayer(Player player) async {
+    try {
+      final docRef = await _playersCollection.add(player);
+      player.id = docRef.id;
+      state = [...state, player];
+    } catch (e) {
+      print('Error al agregar jugador a Firebase: $e');
+    }
+  }
+
+Future<void> updatePlayer(Player player) async {
+  if (player.id == null) return;
+  try {
+    await _playersCollection.doc(player.id).set(player); // <-- pasás Player directamente
+    state = [
+      for (final p in state)
+        if (p.id == player.id) player else p,
+    ];
+  } catch (e) {
+    print('Error al actualizar jugador en Firebase: $e');
   }
 }
 
-final newPlayersProvider = StateNotifierProvider<PlayersNotifier, List<Player>>(
-  (ref) => PlayersNotifier(),
-);
+  Future<void> removePlayer(Player player) async {
+    if (player.id == null) return;
+    try {
+      await _playersCollection.doc(player.id).delete();
+      state = state.where((p) => p.id != player.id).toList();
+    } catch (e) {
+      print('Error al eliminar jugador de Firebase: $e');
+    }
+  }
+}

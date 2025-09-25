@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_login/entities/users.dart';
-import 'package:flutter_login/entities/players_provider.dart';
+import 'package:flutter_login/entities/new_players_provider.dart';
 import 'package:go_router/go_router.dart';
 
 class ViewPlayerScreen extends ConsumerStatefulWidget {
@@ -17,17 +17,17 @@ class ViewPlayerScreen extends ConsumerStatefulWidget {
 class _ViewPlayerScreenState extends ConsumerState<ViewPlayerScreen> {
   bool isEditing = false;
 
-
   @override
   Widget build(BuildContext context) {
-  TextEditingController nameController = TextEditingController(text: widget.jugador.name,);
-  TextEditingController countryController = TextEditingController(text: widget.jugador.country,);
-  TextEditingController goalsController = TextEditingController(text: widget.jugador.goals.toString(),);
-  TextEditingController appearancesController = TextEditingController(text: widget.jugador.appearances.toString(),);
-  TextEditingController clubsController = TextEditingController(text: widget.jugador.clubs,);
-  TextEditingController ageController = TextEditingController(text: widget.jugador.age.toString(),);
-  TextEditingController ratioController = TextEditingController(text: widget.jugador.ratio.toString(),);
-  TextEditingController posterUrlController = TextEditingController(text: widget.jugador.posterUrl,);
+    final nameController = TextEditingController(text: widget.jugador.name);
+    final countryController = TextEditingController(text: widget.jugador.country);
+    final goalsController = TextEditingController(text: widget.jugador.goals.toString());
+    final appearancesController = TextEditingController(text: widget.jugador.appearances.toString());
+    final clubsController = TextEditingController(text: widget.jugador.clubs);
+    final ageController = TextEditingController(text: widget.jugador.age.toString());
+    final ratioController = TextEditingController(text: widget.jugador.ratio.toString());
+    final posterUrlController = TextEditingController(text: widget.jugador.posterUrl);
+
     return Scaffold(
       appBar: AppBar(title: Text('Detalles de ${widget.jugador.name}')),
       body: Padding(
@@ -36,86 +36,87 @@ class _ViewPlayerScreenState extends ConsumerState<ViewPlayerScreen> {
           children: [
             const SizedBox(height: 10),
             TextFormField(
-
               controller: nameController,
               enabled: isEditing,
               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Nombre'),
             ),
             const SizedBox(height: 10),
-            TextField(
+            TextFormField(
               controller: countryController,
               enabled: isEditing,
               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'País'),
             ),
             const SizedBox(height: 10),
-            TextField(
+            TextFormField(
               controller: goalsController,
               enabled: isEditing,
               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Goles'),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 10),
-            TextField(
+            TextFormField(
               controller: appearancesController,
               enabled: isEditing,
               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Partidos'),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 10),
-            TextField(
+            TextFormField(
               controller: clubsController,
               enabled: isEditing,
               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Clubes'),
             ),
             const SizedBox(height: 10),
-            TextField(
+            TextFormField(
               controller: ageController,
               enabled: isEditing,
               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Edad'),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 10),
-            TextField(
+            TextFormField(
               controller: ratioController,
               enabled: isEditing,
               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Promedio'),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
             const SizedBox(height: 10),
-            TextField(
+            TextFormField(
               controller: posterUrlController,
               enabled: isEditing,
               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'URL de la imagen'),
             ),
             const SizedBox(height: 30),
 
-            if (isEditing == true)
+            // Botón para guardar cambios si está editando
+            if (isEditing)
               ElevatedButton(
-                onPressed: () {
-                  // Guardar cambios
-                  ref.read(playersProvider.notifier).removePlayer(widget.jugador);
-                  ref.read(playersProvider.notifier).addPlayer(
-                    Player(
-                      name: nameController.text,
-                      country: countryController.text,
-                      goals: int.parse(goalsController.text),
-                      appearances: int.parse(appearancesController.text),
-                      clubs: clubsController.text,
-                      age: int.parse(ageController.text),
-                      ratio: double.parse(ratioController.text),
-                      posterUrl: posterUrlController.text,
-                    ),
+                onPressed: () async {
+                  final editedPlayer = widget.jugador.copyWith(
+                    name: nameController.text,
+                    country: countryController.text,
+                    goals: int.parse(goalsController.text),
+                    appearances: int.parse(appearancesController.text),
+                    clubs: clubsController.text,
+                    age: int.parse(ageController.text),
+                    ratio: double.parse(ratioController.text),
+                    posterUrl: posterUrlController.text,
                   );
 
-                    isEditing = false;
-                    context.pop();
+                  // Primero eliminamos el antiguo y agregamos el nuevo
+                  await ref.read(newPlayersProvider.notifier).removePlayer(widget.jugador);
+                  await ref.read(newPlayersProvider.notifier).addPlayer(editedPlayer);
+
+                  setState(() => isEditing = false);
+                  context.pop();
                 },
                 child: const Text('GUARDAR CAMBIOS'),
               )
             else
               ElevatedButton(
-                onPressed: () {
-                  ref.read(playersProvider.notifier).removePlayer(widget.jugador);
+                onPressed: () async {
+                  // Borra jugador de Firebase y del estado local
+                  await ref.read(newPlayersProvider.notifier).removePlayer(widget.jugador);
                   context.pop();
                 },
                 child: const Text('BORRAR'),
@@ -124,14 +125,9 @@ class _ViewPlayerScreenState extends ConsumerState<ViewPlayerScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            isEditing = !isEditing;
-          });
-        },
+        onPressed: () => setState(() => isEditing = !isEditing),
         child: Icon(isEditing ? Icons.close : Icons.edit),
       ),
     );
   }
 }
-
