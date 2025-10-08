@@ -88,7 +88,6 @@ class _ViewPlayerScreenState extends ConsumerState<ViewPlayerScreen> {
             ),
             const SizedBox(height: 30),
 
-            // Botón para guardar cambios si está editando
             if (isEditing)
               ElevatedButton(
                 onPressed: () async {
@@ -103,7 +102,6 @@ class _ViewPlayerScreenState extends ConsumerState<ViewPlayerScreen> {
                     posterUrl: posterUrlController.text,
                   );
 
-                  // Primero eliminamos el antiguo y agregamos el nuevo
                   await ref.read(newPlayersProvider.notifier).removePlayer(widget.jugador);
                   await ref.read(newPlayersProvider.notifier).addPlayer(editedPlayer);
 
@@ -115,7 +113,6 @@ class _ViewPlayerScreenState extends ConsumerState<ViewPlayerScreen> {
             else
               ElevatedButton(
                 onPressed: () async {
-                  // Borra jugador de Firebase y del estado local
                   await ref.read(newPlayersProvider.notifier).removePlayer(widget.jugador);
                   context.pop();
                 },

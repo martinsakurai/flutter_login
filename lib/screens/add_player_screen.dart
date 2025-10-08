@@ -61,7 +61,7 @@ class _AddPlayerScreenState extends ConsumerState<AddPlayerScreen> {
                 );
 
                 await ref.read(newPlayersProvider.notifier).addPlayer(newPlayer);
-                context.pop(); // vuelve a HomeScreen
+                context.pop(); // vuelve a homescreen
               },
               child: const Text('AGREGAR JUGADOR'),
             )

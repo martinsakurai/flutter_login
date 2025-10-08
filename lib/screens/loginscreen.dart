@@ -23,7 +23,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // Traer los usuarios de Firebase al iniciar la pantalla
     ref.read(usersProvider.notifier).getAllUsers();
   }
 

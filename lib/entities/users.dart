@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// ------------------ USUARIOS ------------------
 class User {
-  String? id; // ID de Firebase
+  String? id; 
   String email;
   String contrasena;
   String nombre;
@@ -16,7 +15,6 @@ class User {
     required this.direccion,
   });
 
-  // Para enviar a Firebase
   Map<String, dynamic> toFirestore() {
     return {
       'email': email,
@@ -26,7 +24,6 @@ class User {
     };
   }
 
-  // Para crear un User desde Firebase
   factory User.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return User(
@@ -39,9 +36,8 @@ class User {
   }
 }
 
-/// ------------------ JUGADORES ------------------
 class Player {
-  String? id; // ID de Firebase
+  String? id; // id firebase
   String name;
   String country;
   int goals;
@@ -63,7 +59,6 @@ class Player {
     required this.posterUrl,
   });
 
-  // Para enviar a Firebase
   Map<String, dynamic> toFirestore() {
     return {
       'name': name,
@@ -77,7 +72,6 @@ class Player {
     };
   }
 
-  // Para crear un Player desde Firebase
   factory Player.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return Player(
@@ -93,7 +87,6 @@ class Player {
     );
   }
 
-  // Método copyWith para clonar un Player modificando solo los campos que quieras
   Player copyWith({
     String? id,
     String? name,

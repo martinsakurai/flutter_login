@@ -38,7 +38,7 @@ class NewPlayersNotifier extends StateNotifier<List<Player>> {
 Future<void> updatePlayer(Player player) async {
   if (player.id == null) return;
   try {
-    await _playersCollection.doc(player.id).set(player); // <-- pasás Player directamente
+    await _playersCollection.doc(player.id).set(player);
     state = [
       for (final p in state)
         if (p.id == player.id) player else p,
