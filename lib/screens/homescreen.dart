@@ -1,61 +1,130 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_login/entities/users.dart';
 import 'package:flutter_login/entities/new_players_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   static const String name = 'home_screen';
-  final User usuarioIngresado;
 
-  const HomeScreen({super.key, required this.usuarioIngresado});
+  const HomeScreen({super.key});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  User? usuarioFirebase;
+  String? nombreUsuario;
+  bool cargandoNombre = true;
+
   @override
   void initState() {
     super.initState();
-    // Cargar jugadores desde Firebase al iniciar la pantalla
-    Future.microtask(() =>
-        ref.read(newPlayersProvider.notifier).getAllPlayers());
+
+    usuarioFirebase = FirebaseAuth.instance.currentUser;
+
+    Future.microtask(() {
+      ref.read(newPlayersProvider.notifier).getAllPlayers();
+      _cargarNombreUsuario();
+    });
+  }
+
+  Future<void> _cargarNombreUsuario() async {
+    if (usuarioFirebase == null) return;
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(usuarioFirebase!.uid)
+          .get();
+
+      if (doc.exists) {
+        setState(() {
+          nombreUsuario = doc.data()?['nombre'] ?? 'Usuario';
+          cargandoNombre = false;
+        });
+      } else {
+        setState(() {
+          nombreUsuario = 'Usuario';
+          cargandoNombre = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        nombreUsuario = 'Usuario';
+        cargandoNombre = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final jugadores = ref.watch(newPlayersProvider);
 
+    if (usuarioFirebase == null) {
+      Future.microtask(() => context.go('/'));
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(title: Text('Bienvenido, ${widget.usuarioIngresado.nombre}')),
-      body: ListView.builder(
-        itemCount: jugadores.length,
-        itemBuilder: (context, index) {
-          final jugador = jugadores[index];
-          return Card(
-            margin: const EdgeInsets.all(10),
-            child: ListTile(
-              onTap: () {
-                context.push('/viewPlayer', extra: jugador);
-              },
-              leading: Image.network(
-                jugador.posterUrl,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.image),
-              ),
-              title: Text(jugador.name),
-              subtitle: Text(
-                'País: ${jugador.country}\n'
-                'Goles: ${jugador.goals}, Partidos: ${jugador.appearances}, Promedio: ${jugador.ratio}\n'
-                'Clubes: ${jugador.clubs}',
-              ),
+      appBar: AppBar(
+        title: cargandoNombre
+            ? const Text('Cargando usuario...')
+            : Text('Bienvenido, $nombreUsuario'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              if (context.mounted) context.go('/');
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Text(
+              'Correo: ${usuarioFirebase?.email ?? 'No disponible'}',
+              style: const TextStyle(fontSize: 16),
             ),
-          );
-        },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: jugadores.length,
+              itemBuilder: (context, index) {
+                final jugador = jugadores[index];
+                return Card(
+                  margin: const EdgeInsets.all(10),
+                  child: ListTile(
+                    onTap: () {
+                      context.push('/viewPlayer', extra: jugador);
+                    },
+                    leading: Image.network(
+                      jugador.posterUrl,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.image),
+                    ),
+                    title: Text(jugador.name),
+                    subtitle: Text(
+                      'País: ${jugador.country}\n'
+                      'Goles: ${jugador.goals}, Partidos: ${jugador.appearances}, Promedio: ${jugador.ratio}\n'
+                      'Clubes: ${jugador.clubs}',
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
