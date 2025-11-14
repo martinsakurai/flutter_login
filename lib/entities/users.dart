@@ -37,7 +37,7 @@ class User {
 }
 
 class Player {
-  String? id; // id firebase
+  String? id; // firebase document id
   String name;
   String country;
   int goals;
@@ -46,6 +46,9 @@ class Player {
   int age;
   double ratio;
   String posterUrl;
+
+  // campo para guardar si es favorito
+  bool isFavorite;
 
   Player({
     this.id,
@@ -57,6 +60,7 @@ class Player {
     required this.age,
     required this.ratio,
     required this.posterUrl,
+    this.isFavorite = false,
   });
 
   Map<String, dynamic> toFirestore() {
@@ -69,6 +73,7 @@ class Player {
       'age': age,
       'ratio': ratio,
       'posterUrl': posterUrl,
+      'isFavorite': isFavorite, // se guarda en Firestore
     };
   }
 
@@ -78,12 +83,13 @@ class Player {
       id: doc.id,
       name: data['name'] ?? '',
       country: data['country'] ?? '',
-      goals: (data['goals'] ?? 0),
-      appearances: (data['appearances'] ?? 0),
+      goals: data['goals'] ?? 0,
+      appearances: data['appearances'] ?? 0,
       clubs: data['clubs'] ?? '',
-      age: (data['age'] ?? 0),
+      age: data['age'] ?? 0,
       ratio: (data['ratio'] ?? 0.0).toDouble(),
       posterUrl: data['posterUrl'] ?? '',
+      isFavorite: data['isFavorite'] ?? false, // lo recupera correctamente
     );
   }
 
@@ -97,6 +103,7 @@ class Player {
     int? age,
     double? ratio,
     String? posterUrl,
+    bool? isFavorite,
   }) {
     return Player(
       id: id ?? this.id,
@@ -108,6 +115,7 @@ class Player {
       age: age ?? this.age,
       ratio: ratio ?? this.ratio,
       posterUrl: posterUrl ?? this.posterUrl,
+      isFavorite: isFavorite ?? this.isFavorite, // mantiene el favorito
     );
   }
 }

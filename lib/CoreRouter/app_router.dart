@@ -6,6 +6,7 @@ import 'package:flutter_login/screens/edit_player_screen.dart';
 import 'package:flutter_login/screens/registerscreen.dart';
 import 'package:flutter_login/entities/users.dart';
 import 'package:flutter_login/entities/new_players_provider.dart';
+import 'package:flutter_login/screens/profile_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final routerApp = GoRouter(
@@ -43,5 +44,9 @@ final routerApp = GoRouter(
       builder: (context, state) =>
           EditPlayerScreen(jugador: state.extra as Player),
     ),
+    GoRoute(
+  path: '/profile',
+  builder: (context, state) => const ProfileScreen(),
+),
   ],
 );

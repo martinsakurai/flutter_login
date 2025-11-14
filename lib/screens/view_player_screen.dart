@@ -100,10 +100,13 @@ class _ViewPlayerScreenState extends ConsumerState<ViewPlayerScreen> {
                     age: int.parse(ageController.text),
                     ratio: double.parse(ratioController.text),
                     posterUrl: posterUrlController.text,
+
+                    // ⭐ SE MANTIENE IGUAL SIEMPRE
+                    isFavorite: widget.jugador.isFavorite,
                   );
 
-                  await ref.read(newPlayersProvider.notifier).removePlayer(widget.jugador);
-                  await ref.read(newPlayersProvider.notifier).addPlayer(editedPlayer);
+                  // ⭐ YA NO SE BORRA NI SE AGREGA → SE ACTUALIZA
+                  await ref.read(newPlayersProvider.notifier).updatePlayer(editedPlayer);
 
                   setState(() => isEditing = false);
                   context.pop();

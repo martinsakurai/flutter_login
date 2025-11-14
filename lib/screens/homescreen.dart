@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_login/entities/new_players_provider.dart';
+import 'package:flutter_login/entities/favorites_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
@@ -16,8 +17,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   User? usuarioFirebase;
-  String? nombreUsuario;
-  bool cargandoNombre = true;
 
   @override
   void initState() {
@@ -27,42 +26,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     Future.microtask(() {
       ref.read(newPlayersProvider.notifier).getAllPlayers();
-      _cargarNombreUsuario();
     });
-  }
-
-  Future<void> _cargarNombreUsuario() async {
-    if (usuarioFirebase == null) return;
-
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(usuarioFirebase!.uid)
-          .get();
-
-      if (doc.exists) {
-        setState(() {
-          nombreUsuario = doc.data()?['nombre'] ?? 'Usuario';
-          cargandoNombre = false;
-        });
-      } else {
-        setState(() {
-          nombreUsuario = 'Usuario';
-          cargandoNombre = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        nombreUsuario = 'Usuario';
-        cargandoNombre = false;
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final jugadores = ref.watch(newPlayersProvider);
-
+    // si no está logueado, lo manda al login
     if (usuarioFirebase == null) {
       Future.microtask(() => context.go('/'));
       return const Scaffold(
@@ -70,12 +39,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       );
     }
 
+    final jugadores = ref.watch(newPlayersProvider);
+
+    //favoritos por uid
+    final favoritos = ref.watch(favoritesProvider(usuarioFirebase!.uid));
+
+    // ordenar favoritos primero
+    final jugadoresOrdenados = [...jugadores];
+    jugadoresOrdenados.sort((a, b) {
+      final aFav = favoritos.contains(a.id);
+      final bFav = favoritos.contains(b.id);
+      return (bFav ? 1 : 0) - (aFav ? 1 : 0);
+    });
+
     return Scaffold(
       appBar: AppBar(
-        title: cargandoNombre
-            ? const Text('Cargando usuario...')
-            : Text('Bienvenido, $nombreUsuario'),
+        title: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('usuarios')
+              .doc(usuarioFirebase!.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Text("Cargando usuario...");
+            }
+
+            final data = snapshot.data!.data() as Map<String, dynamic>?;
+
+            final nombre = data?['nombre'] ?? 'Usuario';
+
+            return Text('Bienvenido, $nombre');
+          },
+        ),
         actions: [
+          // ir al perfil
+          IconButton(
+            icon: const Icon(Icons.person),
+            tooltip: 'Mi Perfil',
+            onPressed: () {
+              context.push('/profile');
+            },
+          ),
+
+          // logout
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
@@ -85,8 +91,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
+
       body: Column(
         children: [
+          // email del usuario
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Text(
@@ -94,11 +102,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               style: const TextStyle(fontSize: 16),
             ),
           ),
+
+          // lista de jugadores
           Expanded(
             child: ListView.builder(
-              itemCount: jugadores.length,
+              itemCount: jugadoresOrdenados.length,
               itemBuilder: (context, index) {
-                final jugador = jugadores[index];
+                final jugador = jugadoresOrdenados[index];
+                final esFavorito = favoritos.contains(jugador.id);
+
                 return Card(
                   margin: const EdgeInsets.all(10),
                   child: ListTile(
@@ -106,18 +118,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       context.push('/viewPlayer', extra: jugador);
                     },
                     leading: Image.network(
-                      jugador.posterUrl,
+                      jugador.posterUrl ?? '',
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.image),
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.image_not_supported),
                     ),
-                    title: Text(jugador.name),
+                    title: Text(jugador.name ?? 'Sin nombre'),
                     subtitle: Text(
-                      'País: ${jugador.country}\n'
-                      'Goles: ${jugador.goals}, Partidos: ${jugador.appearances}, Promedio: ${jugador.ratio}\n'
-                      'Clubes: ${jugador.clubs}',
+                      'País: ${jugador.country ?? 'Desconocido'}\n'
+                      'Goles: ${jugador.goals}\n'
+                      'Partidos: ${jugador.appearances}\n'
+                      'Promedio: ${jugador.ratio}\n'
+                      'Clubes: ${jugador.clubs ?? 'N/A'}',
+                    ),
+
+                    // favoritos
+                    trailing: IconButton(
+                      icon: Icon(
+                        esFavorito ? Icons.favorite : Icons.favorite_border,
+                        color: esFavorito ? Colors.red : Colors.grey,
+                      ),
+                      onPressed: () {
+                        ref
+                            .read(favoritesProvider(usuarioFirebase!.uid)
+                                .notifier)
+                            .toggleFavorite(jugador.id!);
+                      },
                     ),
                   ),
                 );
@@ -126,6 +154,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           context.push('/addPlayer');
